@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Oceanus Folk Influence Waves - Task 2(a)</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Source+Serif+4:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <style>
+      :root {
+        --bg: #0b1220;
+        --panel: #101826;
+        --card: #f8fafc;
+        --ink: #0f172a;
+        --muted: #64748b;
+        --accent: #f97316;
+        --accent-2: #06b6d4;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Source Serif 4", serif;
+        background:
+          radial-gradient(circle at 15% 10%, rgba(249,115,22,0.18), transparent 40%),
+          radial-gradient(circle at 85% 20%, rgba(6,182,212,0.18), transparent 45%),
+          radial-gradient(circle at 50% 80%, rgba(148,163,184,0.15), transparent 50%),
+          var(--bg);
+        color: #e2e8f0;
+      }
+
+      .shell {
+        max-width: 96vw;
+        margin: 0 auto;
+        padding: 28px 20px 40px;
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+      }
+
+      header.hero {
+        display: grid;
+        gap: 14px;
+        padding: 24px 26px;
+        border-radius: 18px;
+        background: linear-gradient(120deg, rgba(15,23,42,0.9), rgba(30,41,59,0.92));
+        border: 1px solid rgba(148,163,184,0.25);
+        box-shadow: 0 24px 50px rgba(2,8,23,0.45);
+      }
+
+      .hero h1 {
+        margin: 0;
+        font-family: "Space Grotesk", sans-serif;
+        font-size: 28px;
+        letter-spacing: 0.4px;
+      }
+
+      .hero p {
+        margin: 0;
+        color: #cbd5f5;
+        max-width: 900px;
+        line-height: 1.6;
+      }
+
+      .kpis {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 12px;
+      }
+
+      .kpi {
+        padding: 14px 16px;
+        border-radius: 14px;
+        background: rgba(15,23,42,0.65);
+        border: 1px solid rgba(148,163,184,0.25);
+      }
+
+      .kpi span.label {
+        display: block;
+        font-family: "Space Grotesk", sans-serif;
+        font-size: 12px;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: #94a3b8;
+        margin-bottom: 6px;
+      }
+
+      .kpi span.value {
+        display: block;
+        font-family: "Space Grotesk", sans-serif;
+        font-size: 20px;
+        color: #f8fafc;
+      }
+
+      .kpi span.meta {
+        display: block;
+        font-size: 12px;
+        color: #94a3b8;
+        margin-top: 4px;
+      }
+
+      section.panel {
+        background: var(--card);
+        color: var(--ink);
+        border-radius: 18px;
+        padding: 18px 18px 8px;
+        box-shadow: 0 24px 48px rgba(2, 8, 23, 0.35);
+      }
+
+      .panel h2 {
+        margin: 0 0 6px;
+        font-family: "Space Grotesk", sans-serif;
+        font-size: 18px;
+      }
+
+      .panel p {
+        margin: 0 0 10px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .chart-wrap {
+        padding: 8px 8px 12px;
+        border-radius: 16px;
+        background: #f8fafc;
+        width: 100%;
+        height: 70vh;
+        max-height: 640px;
+        min-height: 420px;
+      }
+
+      #chart {
+        width: 100%;
+        height: 100%;
+      }
+
+      .footnote {
+        margin: 8px 0 0;
+        font-size: 12px;
+        color: #64748b;
+      }
+
+      .legend-hint {
+        font-size: 12px;
+        color: #64748b;
+        margin-bottom: 6px;
+      }
+
+      @media (max-width: 900px) {
+        .hero h1 {
+          font-size: 22px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <header class="hero">
+        <h1>Oceanus Folk Echoes</h1>
+        <p>
+          The stack shows how influence expands year by year across genre families. The dashed line tracks
+          Oceanus Folk releases themselves, letting you compare the original output with the impact it sparks.
+        </p>
+        <div class="kpis">
+          <div class="kpi">
+            <span class="label">Influenced works</span>
+            <span class="value" id="kpi-total">__KPI_TOTAL__</span>
+            <span class="meta" id="kpi-span">Span __KPI_SPAN__</span>
+          </div>
+          <div class="kpi">
+            <span class="label">Peak year</span>
+            <span class="value" id="kpi-peak">__KPI_PEAK__</span>
+            <span class="meta">Highest yearly total</span>
+          </div>
+          <div class="kpi">
+            <span class="label">Top genre family</span>
+            <span class="value" id="kpi-top">__KPI_TOP_GROUP__</span>
+            <span class="meta">Cumulative influence</span>
+          </div>
+          <div class="kpi">
+            <span class="label">Oceanus output</span>
+            <span class="value" id="kpi-oceanus">__KPI_OCEANUS__</span>
+            <span class="meta">Original works</span>
+          </div>
+          <div class="kpi">
+            <span class="label">Burst window</span>
+            <span class="value" id="kpi-pulse">__KPI_PULSE__</span>
+            <span class="meta">Concentrated surge</span>
+          </div>
+        </div>
+      </header>
+
+      <section class="panel">
+        <h2>Influence Timeline</h2>
+        <p>
+          Hover to read the crosshair and year totals. Use the slider below to brush a time window.
+        </p>
+        <div class="legend-hint">Click the legend to filter genre waves and the Oceanus Folk line.</div>
+        <div class="chart-wrap">
+          <div id="chart"></div>
+        </div>
+        <p class="footnote">
+          Method: influenced works are those connected to Oceanus Folk by influence edges and released after the
+          original Oceanus Folk work.
+        </p>
+      </section>
+    </div>
+
+    <script>
+      const INLINE_PAYLOAD = __DATA__;
+      const DATA_URL = "__DATA_URL__";
+
+      const loadPayload = async () => {
+        try {
+          const response = await fetch(DATA_URL, { cache: "no-store" });
+          if (response.ok) {
+            return await response.json();
+          }
+        } catch (err) {
+          console.warn("Falling back to inline payload:", err);
+        }
+        return INLINE_PAYLOAD;
+      };
+
+      loadPayload().then((payload) => {
+        const years = payload.years;
+        const groupOrder = payload.groupOrder;
+        const seriesData = payload.series;
+        const oceanus = payload.oceanus;
+        const totals = payload.totals;
+        const tooltipData = payload.tooltip;
+        const oceanusByYear = payload.oceanusByYear;
+
+      const stackedSeries = seriesData.map((series) => ({
+        name: series.name,
+        type: "line",
+        stack: "total",
+        areaStyle: { opacity: 0.78 },
+        showSymbol: false,
+        lineStyle: { width: 1 },
+        emphasis: { focus: "series" },
+        data: series.data,
+        itemStyle: { color: series.color }
+      }));
+
+      const oceanusSeries = {
+        name: oceanus.name,
+        type: "line",
+        symbol: "circle",
+        symbolSize: 6,
+        lineStyle: {
+          type: "dashed",
+          color: oceanus.color,
+          width: 2
+        },
+        itemStyle: {
+          color: oceanus.color
+        },
+        emphasis: { focus: "series" },
+        data: oceanus.data,
+        z: 4
+      };
+
+      const chart = echarts.init(document.getElementById("chart"));
+      const option = {
+        backgroundColor: "transparent",
+        grid: {
+          left: 60,
+          right: 30,
+          top: 46,
+          bottom: 56
+        },
+        legend: {
+          top: 0,
+          data: [...groupOrder, oceanus.name],
+          textStyle: {
+            fontFamily: "Space Grotesk",
+            color: "#0f172a"
+          },
+          itemHeight: 10,
+          itemWidth: 14
+        },
+        tooltip: {
+          trigger: "axis",
+          axisPointer: {
+            type: "cross",
+            snap: false,
+            lineStyle: { color: "#94a3b8", type: "dashed" },
+            crossStyle: { color: "#94a3b8", type: "dashed" },
+            label: { backgroundColor: "#0f172a" }
+          },
+          backgroundColor: "rgba(15,23,42,0.95)",
+          borderColor: "rgba(148,163,184,0.4)",
+          borderWidth: 1,
+          textStyle: {
+            color: "#f8fafc",
+            fontFamily: "Space Grotesk",
+            fontSize: 12
+          },
+          extraCssText: "border-radius:10px; box-shadow:0 12px 24px rgba(15,23,42,0.25);",
+          formatter: function (params) {
+            if (!params || !params.length) {
+              return "";
+            }
+            const year = params[0].axisValue;
+            let html = `<strong>${year}</strong><br/>`;
+            const groups = tooltipData[year] || {};
+            groupOrder.forEach((group) => {
+              if (!groups[group]) {
+                return;
+              }
+              html += `<span style=\"text-decoration:underline;font-weight:600;\">${group}</span><br/>`;
+              const subgenres = groups[group];
+              Object.keys(subgenres)
+                .sort((a, b) => subgenres[b] - subgenres[a])
+                .forEach((sub) => {
+                  html += `&nbsp;&nbsp;- ${sub}: ${subgenres[sub]}<br/>`;
+                });
+            });
+            html += `<hr style=\"margin:4px 0;border:0;border-top:1px dashed #94a3b8;\">`;
+            const oceanusVal = oceanusByYear[year] || 0;
+            html += `<strong>Oceanus Folk</strong>: ${oceanusVal}`;
+            return html;
+          }
+        },
+        xAxis: {
+          type: "category",
+          boundaryGap: false,
+          data: years,
+          axisLabel: { color: "#0f172a" },
+          axisLine: { lineStyle: { color: "#cbd5e1" } },
+          splitLine: { show: true, lineStyle: { color: "#e2e8f0" } }
+        },
+        yAxis: {
+          type: "value",
+          name: "Influenced works",
+          nameTextStyle: { fontFamily: "Space Grotesk", color: "#0f172a" },
+          axisLabel: { color: "#0f172a" },
+          splitLine: { lineStyle: { color: "#e2e8f0" } }
+        },
+        dataZoom: [
+          {
+            type: "slider",
+            xAxisIndex: 0,
+            bottom: 12,
+            height: 18,
+            showDataShadow: true,
+            brushSelect: false,
+            backgroundColor: "#e2e8f0",
+            fillerColor: "rgba(59,130,246,0.18)",
+            borderColor: "#cbd5e1",
+            handleStyle: { color: "#64748b" }
+          }
+        ],
+        series: [...stackedSeries, oceanusSeries]
+      };
+
+      chart.setOption(option);
+
+      const seriesMap = new Map(seriesData.map((series) => [series.name, series.data]));
+      const defaultSelected = {};
+      [...groupOrder, oceanus.name].forEach((name) => {
+        defaultSelected[name] = true;
+      });
+      const totalEl = document.getElementById("kpi-total");
+      const spanEl = document.getElementById("kpi-span");
+      const peakEl = document.getElementById("kpi-peak");
+      const topEl = document.getElementById("kpi-top");
+      const oceanusEl = document.getElementById("kpi-oceanus");
+      const pulseEl = document.getElementById("kpi-pulse");
+      let legendSelected = { ...defaultSelected };
+      let zoomState = { start: 0, end: 100, startValue: null, endValue: null };
+
+      const findIndexAtOrAfter = (value) => {
+        for (let i = 0; i < years.length; i += 1) {
+          if (years[i] >= value) return i;
+        }
+        return years.length - 1;
+      };
+
+      const findIndexAtOrBefore = (value) => {
+        for (let i = years.length - 1; i >= 0; i -= 1) {
+          if (years[i] <= value) return i;
+        }
+        return 0;
+      };
+
+      const getZoomRange = () => {
+        if (years.length === 0) {
+          return { startIdx: 0, endIdx: 0 };
+        }
+        if (zoomState.startValue !== null || zoomState.endValue !== null) {
+          const startVal =
+            zoomState.startValue !== null ? Number(zoomState.startValue) : years[0];
+          const endVal =
+            zoomState.endValue !== null ? Number(zoomState.endValue) : years[years.length - 1];
+          let startIdx = findIndexAtOrAfter(startVal);
+          let endIdx = findIndexAtOrBefore(endVal);
+          if (endIdx < startIdx) {
+            const tmp = startIdx;
+            startIdx = endIdx;
+            endIdx = tmp;
+          }
+          return { startIdx, endIdx };
+        }
+        const startPct = zoomState.start ?? 0;
+        const endPct = zoomState.end ?? 100;
+        const startIdx = Math.max(0, Math.floor((startPct / 100) * (years.length - 1)));
+        const endIdx = Math.max(startIdx, Math.ceil((endPct / 100) * (years.length - 1)));
+        return { startIdx, endIdx };
+      };
+
+      const updateKpis = () => {
+        const selected = legendSelected || defaultSelected;
+        const isSelected = (name) => selected[name] !== false;
+
+        const visibleGroups = groupOrder.filter((group) => isSelected(group));
+        const oceanusVisible = isSelected(oceanus.name);
+        const { startIdx, endIdx } = getZoomRange();
+        const rangeYears = years.slice(startIdx, endIdx + 1);
+
+        let totalInfluenced = 0;
+        let peakYear = null;
+        let peakCount = 0;
+        const groupTotals = {};
+        visibleGroups.forEach((group) => {
+          groupTotals[group] = 0;
+        });
+
+        for (let i = startIdx; i <= endIdx; i += 1) {
+          let yearTotal = 0;
+          visibleGroups.forEach((group) => {
+            const series = seriesMap.get(group) || [];
+            const val = Number(series[i] || 0);
+            yearTotal += val;
+            totalInfluenced += val;
+            groupTotals[group] += val;
+          });
+          if (yearTotal > peakCount) {
+            peakCount = yearTotal;
+            peakYear = years[i];
+          }
+        }
+
+        let topGroup = null;
+        let topGroupCount = 0;
+        Object.keys(groupTotals).forEach((group) => {
+          if (groupTotals[group] > topGroupCount) {
+            topGroupCount = groupTotals[group];
+            topGroup = group;
+          }
+        });
+
+        let oceanusTotal = 0;
+        if (oceanusVisible) {
+          for (let i = startIdx; i <= endIdx; i += 1) {
+            oceanusTotal += Number(oceanus.data[i] || 0);
+          }
+        }
+
+        let pulseTotal = 0;
+        for (let i = startIdx; i <= endIdx; i += 1) {
+          const year = years[i];
+          if (year < 2025 || year > 2031) {
+            continue;
+          }
+          visibleGroups.forEach((group) => {
+            const series = seriesMap.get(group) || [];
+            pulseTotal += Number(series[i] || 0);
+          });
+        }
+
+        if (totalEl) totalEl.textContent = totalInfluenced.toLocaleString();
+        if (spanEl) {
+          spanEl.textContent = rangeYears.length
+            ? `Span ${rangeYears[0]}-${rangeYears[rangeYears.length - 1]}`
+            : "Span —";
+        }
+        if (peakEl) {
+          peakEl.textContent = peakYear ? `${peakYear} (${peakCount})` : "—";
+        }
+        if (topEl) {
+          topEl.textContent = topGroup ? `${topGroup} (${topGroupCount})` : "—";
+        }
+        if (oceanusEl) oceanusEl.textContent = oceanusTotal.toLocaleString();
+        if (pulseEl) {
+          if (rangeYears.length === 0) {
+            pulseEl.textContent = "—";
+          } else {
+            const burstStart = Math.max(2025, rangeYears[0]);
+            const burstEnd = Math.min(2031, rangeYears[rangeYears.length - 1]);
+            if (burstStart <= burstEnd) {
+              pulseEl.textContent = `${burstStart}-${burstEnd}: ${pulseTotal.toLocaleString()}`;
+            } else {
+              pulseEl.textContent = "Outside window";
+            }
+          }
+        }
+      };
+
+      const syncLegendState = () => {
+        const optionLegend = chart.getOption().legend;
+        if (optionLegend && optionLegend[0] && optionLegend[0].selected) {
+          legendSelected = { ...defaultSelected, ...optionLegend[0].selected };
+        }
+      };
+
+      updateKpis();
+      chart.on("legendselectchanged", (params) => {
+        legendSelected = { ...defaultSelected, ...params.selected };
+        updateKpis();
+      });
+      chart.on("dataZoom", (params) => {
+        const batch = params.batch && params.batch[0] ? params.batch[0] : params;
+        zoomState = {
+          start: batch.start ?? zoomState.start,
+          end: batch.end ?? zoomState.end,
+          startValue: batch.startValue ?? null,
+          endValue: batch.endValue ?? null
+        };
+        updateKpis();
+      });
+      chart.on("finished", () => {
+        syncLegendState();
+        updateKpis();
+      });
+        window.addEventListener("resize", () => chart.resize());
+      });
+    </script>
+  </body>
+</html>

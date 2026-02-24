@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Oceanus Folk & Sailor Shift - Task 2(c)</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Source+Serif+4:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <style>
+      :root {
+        --bg: #0b1220;
+        --panel: #101826;
+        --card: #f8fafc;
+        --ink: #0f172a;
+        --muted: #64748b;
+        --accent: #f97316;
+        --accent-2: #06b6d4;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Source Serif 4", serif;
+        background:
+          radial-gradient(circle at 15% 10%, rgba(249,115,22,0.18), transparent 40%),
+          radial-gradient(circle at 85% 20%, rgba(6,182,212,0.18), transparent 45%),
+          radial-gradient(circle at 50% 80%, rgba(148,163,184,0.15), transparent 50%),
+          var(--bg);
+        color: #e2e8f0;
+      }
+
+      .shell {
+        max-width: 96vw;
+        margin: 0 auto;
+        padding: 28px 20px 40px;
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+      }
+
+      header.hero {
+        display: grid;
+        gap: 14px;
+        padding: 24px 26px;
+        border-radius: 18px;
+        background: linear-gradient(120deg, rgba(15,23,42,0.9), rgba(30,41,59,0.92));
+        border: 1px solid rgba(148,163,184,0.25);
+        box-shadow: 0 24px 50px rgba(2,8,23,0.45);
+      }
+
+      .hero h1 {
+        margin: 0;
+        font-family: "Space Grotesk", sans-serif;
+        font-size: 28px;
+        letter-spacing: 0.4px;
+      }
+
+      .hero p {
+        margin: 0;
+        color: #cbd5f5;
+        max-width: 900px;
+        line-height: 1.6;
+      }
+
+      .kpis {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 12px;
+      }
+
+      .kpi {
+        padding: 14px 16px;
+        border-radius: 14px;
+        background: rgba(15,23,42,0.65);
+        border: 1px solid rgba(148,163,184,0.25);
+      }
+
+      .kpi span.label {
+        display: block;
+        font-family: "Space Grotesk", sans-serif;
+        font-size: 12px;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: #94a3b8;
+        margin-bottom: 6px;
+      }
+
+      .kpi span.value {
+        display: block;
+        font-family: "Space Grotesk", sans-serif;
+        font-size: 20px;
+        color: #f8fafc;
+      }
+
+      .kpi span.meta {
+        display: block;
+        font-size: 12px;
+        color: #94a3b8;
+        margin-top: 4px;
+      }
+
+      section.panel {
+        background: var(--card);
+        color: var(--ink);
+        border-radius: 18px;
+        padding: 18px 18px 8px;
+        box-shadow: 0 24px 48px rgba(2, 8, 23, 0.35);
+      }
+
+      .panel h2 {
+        margin: 0 0 6px;
+        font-family: "Space Grotesk", sans-serif;
+        font-size: 18px;
+      }
+
+      .panel p {
+        margin: 0 0 10px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .chart-wrap {
+        padding: 8px 8px 12px;
+        border-radius: 16px;
+        background: #f8fafc;
+        width: 100%;
+        height: 62vh;
+        max-height: 620px;
+        min-height: 340px;
+      }
+
+      #line-chart {
+        width: 100%;
+        height: 100%;
+      }
+
+      .footnote {
+        margin: 8px 0 0;
+        font-size: 12px;
+        color: #64748b;
+      }
+
+      .legend-hint {
+        font-size: 12px;
+        color: #64748b;
+        margin-bottom: 6px;
+      }
+
+      @media (max-width: 900px) {
+        .hero h1 {
+          font-size: 22px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <header class="hero">
+        <h1>Oceanus Folk vs Sailor Shift</h1>
+        <p>
+          The chart merges Oceanus Folk output (lines) with the stacked inspiration mix (areas) to show how
+          Sailor Shift rose alongside shifting genre influences.
+        </p>
+        <div class="kpis">
+          <div class="kpi">
+            <span class="label">Oceanus Folk works</span>
+            <span class="value" id="kpi-oceanus">305</span>
+            <span class="meta">Selected time window</span>
+          </div>
+          <div class="kpi">
+            <span class="label">Sailor Shift works</span>
+            <span class="value" id="kpi-sailor">36</span>
+            <span class="meta">Share of Oceanus output</span>
+          </div>
+          <div class="kpi">
+            <span class="label">Top inspiration</span>
+            <span class="value" id="kpi-top-genre">Indie Folk (100)</span>
+            <span class="meta">By influence sources</span>
+          </div>
+          <div class="kpi">
+            <span class="label">Peak Sailor share</span>
+            <span class="value" id="kpi-peak-share">2036 (100%)</span>
+            <span class="meta">Highest yearly proportion</span>
+          </div>
+        </div>
+      </header>
+
+      <section class="panel">
+        <h2>Oceanus Folk Change & Contemporary Inspiration</h2>
+        <p>
+          Hover to read the crosshair and detailed counts. Use the slider to brush a time window.
+        </p>
+        <div class="legend-hint">Legend toggles Oceanus vs Sailor and the inspiration groups.</div>
+        <div class="chart-wrap">
+          <div id="line-chart"></div>
+        </div>
+        <p class="footnote">
+          Method: Oceanus Folk works are identified directly. Sailor Shift counts include any Performer,
+          Composer, Producer, or Lyricist role on Oceanus Folk works. Inspiration sources use influence edges
+          with source works released before each Oceanus Folk work.
+        </p>
+      </section>
+
+    </div>
+
+    <script>
+      const INLINE_PAYLOAD = [{"year": 1992, "genre": "Oceanus Folk", "count": 1}, {"year": 1993, "genre": "Oceanus Folk", "count": 3}, {"year": 1994, "genre": "Oceanus Folk", "count": 3}, {"year": 1995, "genre": "Oceanus Folk", "count": 5}, {"year": 1997, "genre": "Oceanus Folk", "count": 2}, {"year": 1999, "genre": "Oceanus Folk", "count": 2}, {"year": 2000, "genre": "Oceanus Folk", "count": 1}, {"year": 2000, "genre": "Doom Metal", "count": 1}, {"year": 2001, "genre": "Oceanus Folk", "count": 3}, {"year": 2001, "genre": "Celtic Folk", "count": 1}, {"year": 2001, "genre": "Synthpop", "count": 1}, {"year": 2001, "genre": "Synthwave", "count": 1}, {"year": 2004, "genre": "Oceanus Folk", "count": 7}, {"year": 2005, "genre": "Oceanus Folk", "count": 3}, {"year": 2005, "genre": "Dream Pop", "count": 1}, {"year": 2007, "genre": "Oceanus Folk", "count": 3}, {"year": 2008, "genre": "Oceanus Folk", "count": 2}, {"year": 2009, "genre": "Oceanus Folk", "count": 2}, {"year": 2009, "genre": "Synthwave", "count": 1}, {"year": 2010, "genre": "Oceanus Folk", "count": 12}, {"year": 2010, "genre": "Dream Pop", "count": 1}, {"year": 2010, "genre": "Synthwave", "count": 2}, {"year": 2011, "genre": "Oceanus Folk", "count": 1}, {"year": 2013, "genre": "Oceanus Folk", "count": 19}, {"year": 2013, "genre": "Alternative Rock", "count": 2}, {"year": 2013, "genre": "Indie Folk", "count": 7}, {"year": 2013, "genre": "Southern Gothic Rock", "count": 1}, {"year": 2013, "genre": "Synthwave", "count": 2}, {"year": 2014, "genre": "Oceanus Folk", "count": 2}, {"year": 2016, "genre": "Oceanus Folk", "count": 2}, {"year": 2016, "genre": "Indie Folk", "count": 1}, {"year": 2017, "genre": "Oceanus Folk", "count": 21}, {"year": 2017, "genre": "Indie Folk", "count": 10}, {"year": 2017, "genre": "Psychedelic Rock", "count": 2}, {"year": 2017, "genre": "Synthwave", "count": 1}, {"year": 2019, "genre": "Oceanus Folk", "count": 1}, {"year": 2019, "genre": "Doom Metal", "count": 1}, {"year": 2019, "genre": "Indie Folk", "count": 1}, {"year": 2020, "genre": "Oceanus Folk", "count": 19}, {"year": 2020, "genre": "Doom Metal", "count": 1}, {"year": 2020, "genre": "Indie Folk", "count": 15}, {"year": 2020, "genre": "Synthpop", "count": 1}, {"year": 2021, "genre": "Oceanus Folk", "count": 3}, {"year": 2021, "genre": "Doom Metal", "count": 1}, {"year": 2021, "genre": "Indie Folk", "count": 1}, {"year": 2021, "genre": "Synthwave", "count": 1}, {"year": 2022, "genre": "Oceanus Folk", "count": 5}, {"year": 2022, "genre": "Indie Folk", "count": 4}, {"year": 2023, "genre": "Oceanus Folk", "count": 34}, {"year": 2023, "genre": "Americana", "count": 1}, {"year": 2023, "genre": "Desert Rock", "count": 1}, {"year": 2023, "genre": "Doom Metal", "count": 2}, {"year": 2023, "genre": "Indie Folk", "count": 21}, {"year": 2023, "genre": "Indie Rock", "count": 1}, {"year": 2023, "genre": "Synthpop", "count": 5}, {"year": 2024, "genre": "Oceanus Folk", "count": 13}, {"year": 2024, "genre": "Sailor Oceanus Folk", "count": 1}, {"year": 2024, "genre": "Alternative Rock", "count": 1}, {"year": 2024, "genre": "Doom Metal", "count": 1}, {"year": 2024, "genre": "Indie Folk", "count": 4}, {"year": 2024, "genre": "Symphonic Metal", "count": 1}, {"year": 2024, "genre": "Synthpop", "count": 1}, {"year": 2025, "genre": "Oceanus Folk", "count": 11}, {"year": 2025, "genre": "Sailor Oceanus Folk", "count": 1}, {"year": 2025, "genre": "Indie Folk", "count": 6}, {"year": 2025, "genre": "Indie Rock", "count": 1}, {"year": 2025, "genre": "Jazz Surf Rock", "count": 1}, {"year": 2026, "genre": "Oceanus Folk", "count": 25}, {"year": 2026, "genre": "Sailor Oceanus Folk", "count": 1}, {"year": 2026, "genre": "Desert Rock", "count": 1}, {"year": 2026, "genre": "Doom Metal", "count": 3}, {"year": 2026, "genre": "Dream Pop", "count": 2}, {"year": 2026, "genre": "Indie Folk", "count": 10}, {"year": 2026, "genre": "Lo-Fi Electronica", "count": 1}, {"year": 2026, "genre": "Psychedelic Rock", "count": 3}, {"year": 2026, "genre": "Synthpop", "count": 2}, {"year": 2026, "genre": "Synthwave", "count": 3}, {"year": 2027, "genre": "Oceanus Folk", "count": 6}, {"year": 2027, "genre": "Blues Rock", "count": 1}, {"year": 2027, "genre": "Desert Rock", "count": 1}, {"year": 2027, "genre": "Dream Pop", "count": 3}, {"year": 2027, "genre": "Indie Folk", "count": 3}, {"year": 2027, "genre": "Synthwave", "count": 1}, {"year": 2028, "genre": "Oceanus Folk", "count": 11}, {"year": 2028, "genre": "Sailor Oceanus Folk", "count": 5}, {"year": 2028, "genre": "Americana", "count": 1}, {"year": 2028, "genre": "Desert Rock", "count": 2}, {"year": 2028, "genre": "Doom Metal", "count": 1}, {"year": 2028, "genre": "Indie Folk", "count": 2}, {"year": 2028, "genre": "Indie Rock", "count": 1}, {"year": 2028, "genre": "Psychedelic Rock", "count": 2}, {"year": 2028, "genre": "Southern Gothic Rock", "count": 1}, {"year": 2028, "genre": "Synthwave", "count": 2}, {"year": 2029, "genre": "Oceanus Folk", "count": 19}, {"year": 2029, "genre": "Sailor Oceanus Folk", "count": 1}, {"year": 2029, "genre": "Alternative Rock", "count": 1}, {"year": 2029, "genre": "Americana", "count": 1}, {"year": 2029, "genre": "Desert Rock", "count": 1}, {"year": 2029, "genre": "Doom Metal", "count": 1}, {"year": 2029, "genre": "Dream Pop", "count": 2}, {"year": 2029, "genre": "Indie Folk", "count": 9}, {"year": 2029, "genre": "Indie Rock", "count": 1}, {"year": 2029, "genre": "Psychedelic Rock", "count": 2}, {"year": 2029, "genre": "Symphonic Metal", "count": 1}, {"year": 2029, "genre": "Synthwave", "count": 1}, {"year": 2030, "genre": "Oceanus Folk", "count": 9}, {"year": 2030, "genre": "Sailor Oceanus Folk", "count": 5}, {"year": 2030, "genre": "Alternative Rock", "count": 1}, {"year": 2030, "genre": "Dream Pop", "count": 1}, {"year": 2030, "genre": "Indie Folk", "count": 2}, {"year": 2030, "genre": "Space Rock", "count": 3}, {"year": 2030, "genre": "Synthwave", "count": 1}, {"year": 2031, "genre": "Oceanus Folk", "count": 14}, {"year": 2031, "genre": "Sailor Oceanus Folk", "count": 3}, {"year": 2031, "genre": "Desert Rock", "count": 1}, {"year": 2031, "genre": "Dream Pop", "count": 1}, {"year": 2031, "genre": "Post-Apocalyptic Folk", "count": 2}, {"year": 2031, "genre": "Southern Gothic Rock", "count": 1}, {"year": 2031, "genre": "Symphonic Metal", "count": 1}, {"year": 2032, "genre": "Oceanus Folk", "count": 4}, {"year": 2032, "genre": "Sailor Oceanus Folk", "count": 2}, {"year": 2032, "genre": "Alternative Rock", "count": 1}, {"year": 2032, "genre": "Dream Pop", "count": 1}, {"year": 2032, "genre": "Indie Folk", "count": 1}, {"year": 2033, "genre": "Oceanus Folk", "count": 3}, {"year": 2033, "genre": "Sailor Oceanus Folk", "count": 1}, {"year": 2033, "genre": "Blues Rock", "count": 1}, {"year": 2034, "genre": "Oceanus Folk", "count": 11}, {"year": 2034, "genre": "Sailor Oceanus Folk", "count": 5}, {"year": 2034, "genre": "Alternative Rock", "count": 1}, {"year": 2034, "genre": "Avant-Garde Folk", "count": 1}, {"year": 2034, "genre": "Blues Rock", "count": 1}, {"year": 2034, "genre": "Desert Rock", "count": 1}, {"year": 2034, "genre": "Doom Metal", "count": 1}, {"year": 2034, "genre": "Dream Pop", "count": 1}, {"year": 2034, "genre": "Indie Folk", "count": 2}, {"year": 2034, "genre": "Psychedelic Rock", "count": 1}, {"year": 2034, "genre": "Synthwave", "count": 1}, {"year": 2035, "genre": "Oceanus Folk", "count": 8}, {"year": 2035, "genre": "Sailor Oceanus Folk", "count": 1}, {"year": 2035, "genre": "Avant-Garde Folk", "count": 1}, {"year": 2035, "genre": "Dream Pop", "count": 1}, {"year": 2035, "genre": "Indie Rock", "count": 1}, {"year": 2035, "genre": "Southern Gothic Rock", "count": 1}, {"year": 2036, "genre": "Oceanus Folk", "count": 3}, {"year": 2036, "genre": "Sailor Oceanus Folk", "count": 3}, {"year": 2036, "genre": "Alternative Rock", "count": 1}, {"year": 2036, "genre": "Indie Rock", "count": 1}, {"year": 2037, "genre": "Oceanus Folk", "count": 5}, {"year": 2037, "genre": "Sailor Oceanus Folk", "count": 1}, {"year": 2037, "genre": "Dream Pop", "count": 1}, {"year": 2037, "genre": "Indie Folk", "count": 1}, {"year": 2037, "genre": "Psychedelic Rock", "count": 1}, {"year": 2038, "genre": "Oceanus Folk", "count": 4}, {"year": 2038, "genre": "Sailor Oceanus Folk", "count": 3}, {"year": 2038, "genre": "Americana", "count": 2}, {"year": 2038, "genre": "Blues Rock", "count": 1}, {"year": 2038, "genre": "Emo/Pop Punk", "count": 1}, {"year": 2038, "genre": "Indie Rock", "count": 2}, {"year": 2040, "genre": "Oceanus Folk", "count": 3}, {"year": 2040, "genre": "Sailor Oceanus Folk", "count": 3}];
+      const DATA_URL = "./task2c.json";
+
+      const loadPayload = async () => {
+        try {
+          const response = await fetch(DATA_URL, { cache: "no-store" });
+          if (response.ok) {
+            const text = await response.text();
+            const trimmed = text.trim();
+            const looksLikeJson = trimmed.startsWith("{") || trimmed.startsWith("[");
+            if (!looksLikeJson) {
+              console.warn("Unexpected payload for task2c.json, falling back to inline.");
+              return INLINE_PAYLOAD;
+            }
+            try {
+              return JSON.parse(text);
+            } catch (parseErr) {
+              console.warn("Invalid JSON payload, falling back to inline:", parseErr);
+              return INLINE_PAYLOAD;
+            }
+          }
+        } catch (err) {
+          console.warn("Falling back to inline payload:", err);
+        }
+        return INLINE_PAYLOAD;
+      };
+
+      loadPayload().then((payload) => {
+        const rows = Array.isArray(payload) ? payload : [];
+        const years = Array.from(
+          new Set(rows.map((r) => Number(r.year)).filter((val) => !Number.isNaN(val)))
+        ).sort((a, b) => a - b);
+        const yearLabels = years.map((year) => String(year));
+
+        const oceanusByYear = new Map();
+        const sailorByYear = new Map();
+
+        const genreGroupMap = {
+          "Alternative Rock": "Rock",
+          "Indie Rock": "Rock",
+          "Psychedelic Rock": "Rock",
+          "Southern Gothic Rock": "Rock",
+          "Jazz Surf Rock": "Rock",
+          "Space Rock": "Rock",
+          "Desert Rock": "Rock",
+          "Blues Rock": "Rock",
+          "Dream Pop": "Pop",
+          "Synthpop": "Pop",
+          "Indie Pop": "Pop",
+          "Indie Folk": "Folk",
+          "Americana": "Folk",
+          "Avant-Garde Folk": "Folk",
+          "Celtic Folk": "Folk",
+          "Post-Apocalyptic Folk": "Folk",
+          "Doom Metal": "Metal",
+          "Symphonic Metal": "Metal",
+          "Synthwave": "Electronic",
+          "Lo-Fi Electronica": "Electronic",
+          "Emo/Pop Punk": "Punk"
+        };
+
+        const groupOrder = ["Pop", "Rock", "Metal", "Folk", "Electronic", "Punk"];
+        const groupColors = {
+          Pop: "#f97316",
+          Rock: "#3b82f6",
+          Metal: "#64748b",
+          Folk: "#22c55e",
+          Electronic: "#06b6d4",
+          Punk: "#e11d48"
+        };
+        const tooltipData = {};
+        const groupMap = {};
+        const yearIndex = new Map(years.map((year, idx) => [year, idx]));
+        groupOrder.forEach((group) => {
+          groupMap[group] = new Array(years.length).fill(0);
+        });
+        years.forEach((year) => {
+          tooltipData[year] = {};
+          groupOrder.forEach((group) => {
+            tooltipData[year][group] = {};
+          });
+        });
+
+        rows.forEach((row) => {
+          const year = Number(row.year);
+          const genre = row.genre;
+          const count = Number(row.count || 0);
+          if (!year || !genre || !count) return;
+          if (genre === "Oceanus Folk") {
+            oceanusByYear.set(year, (oceanusByYear.get(year) || 0) + count);
+            return;
+          }
+          if (genre === "Sailor Oceanus Folk") {
+            sailorByYear.set(year, (sailorByYear.get(year) || 0) + count);
+            return;
+          }
+          const group = genreGroupMap[genre];
+          if (!group) return;
+          const yearIdx = yearIndex.get(year);
+          if (yearIdx === undefined) return;
+          groupMap[group][yearIdx] += count;
+          tooltipData[year][group][genre] =
+            (tooltipData[year][group][genre] || 0) + count;
+        });
+
+        const oceanusSeries = years.map((year) => oceanusByYear.get(year) || 0);
+        const sailorSeries = years.map((year) => sailorByYear.get(year) || 0);
+
+        const areaSeries = groupOrder.map((group) => ({
+          name: group,
+          type: "line",
+          stack: "total",
+          areaStyle: { opacity: 0.78 },
+          showSymbol: false,
+          lineStyle: { width: 1 },
+          emphasis: { focus: "series" },
+          data: groupMap[group] || new Array(years.length).fill(0),
+          itemStyle: { color: groupColors[group] },
+          z: 1
+        }));
+
+        const lineNames = ["Oceanus Folk works", "Sailor Shift works"];
+        const lineOptions = [
+          {
+            name: lineNames[0],
+            type: "line",
+            data: oceanusSeries,
+            symbol: "circle",
+            symbolSize: 6,
+            smooth: false,
+            lineStyle: { color: "#111827", width: 2.2 },
+            itemStyle: { color: "#111827" },
+            emphasis: { focus: "series" },
+            z: 3
+          },
+          {
+            name: lineNames[1],
+            type: "line",
+            data: sailorSeries,
+            symbol: "circle",
+            symbolSize: 6,
+            smooth: false,
+            lineStyle: { color: "#fbbf24", width: 2.2 },
+            itemStyle: { color: "#fbbf24" },
+            emphasis: { focus: "series" },
+            z: 3
+          }
+        ];
+
+        const chart = echarts.init(document.getElementById("line-chart"));
+
+        const lineOption = {
+          backgroundColor: "transparent",
+          grid: { left: 80, right: 50, top: 80, bottom: 110 },
+          legend: {
+            top: 6,
+            left: 8,
+            data: [...lineNames, ...groupOrder],
+            textStyle: { fontFamily: "Space Grotesk", color: "#0f172a" },
+            itemWidth: 14,
+            itemHeight: 10
+          },
+          tooltip: {
+            trigger: "axis",
+            axisPointer: {
+              type: "cross",
+              snap: true,
+              lineStyle: { color: "#94a3b8", type: "dashed" },
+              crossStyle: { color: "#94a3b8", type: "dashed" },
+              label: { backgroundColor: "#0f172a" }
+            },
+            backgroundColor: "rgba(15,23,42,0.95)",
+            borderColor: "rgba(148,163,184,0.4)",
+            borderWidth: 1,
+            textStyle: {
+              color: "#f8fafc",
+              fontFamily: "Space Grotesk",
+              fontSize: 12
+            },
+            extraCssText: "border-radius:10px; box-shadow:0 12px 24px rgba(15,23,42,0.25);",
+            formatter: (params) => {
+              if (!params || !params.length) return "";
+              const yearLabel = params[0].axisValue;
+              const year = Number(yearLabel);
+              const yearIdx = yearIndex.get(year);
+              let html = `<strong>${year}</strong><br/>`;
+
+              const oceanusName = lineNames[0];
+              const sailorName = lineNames[1];
+              const oceanusVal = yearIdx === undefined ? 0 : (oceanusSeries[yearIdx] || 0);
+              const sailorVal = yearIdx === undefined ? 0 : (sailorSeries[yearIdx] || 0);
+              const share = oceanusVal
+                ? ((sailorVal / oceanusVal) * 100).toFixed(1)
+                : "0.0";
+
+              html += `<span style=\"font-weight:600;\">${oceanusName}</span>: ${oceanusVal}<br/>`;
+              html += `<span style=\"font-weight:600;\">${sailorName}</span>: ${sailorVal} (${share}%)<br/>`;
+
+              const groups = tooltipData[year] || {};
+              groupOrder.forEach((group) => {
+                if (!isSelected(group)) return;
+                const details = groups[group];
+                if (!details || !Object.keys(details).length) {
+                  return;
+                }
+                const total = Object.values(details).reduce(
+                  (acc, val) => acc + Number(val || 0),
+                  0
+                );
+                html += `<span style=\"text-decoration:underline;font-weight:600;\">${group}</span>: ${total}<br/>`;
+                Object.keys(details)
+                  .sort((a, b) => details[b] - details[a])
+                  .forEach((sub) => {
+                    html += `&nbsp;&nbsp;- ${sub}: ${details[sub]}<br/>`;
+                  });
+              });
+              return html;
+            }
+          },
+          xAxis: {
+            type: "category",
+            boundaryGap: false,
+            data: yearLabels,
+            axisLabel: { color: "#0f172a", rotate: 90, margin: 12 },
+            axisLine: { lineStyle: { color: "#cbd5e1" } },
+            splitLine: { show: true, lineStyle: { color: "#e2e8f0" } },
+            name: "Year",
+            nameLocation: "middle",
+            nameGap: 60,
+            nameTextStyle: { fontFamily: "Space Grotesk", color: "#64748b" }
+          },
+          yAxis: {
+            type: "value",
+            name: "Oceanus Folk works",
+            nameTextStyle: { fontFamily: "Space Grotesk", color: "#0f172a" },
+            axisLabel: { color: "#0f172a" },
+            splitLine: { lineStyle: { color: "#e2e8f0" } }
+          },
+          dataZoom: [
+            {
+              type: "slider",
+              xAxisIndex: 0,
+              bottom: 18,
+              height: 20,
+              showDataShadow: true,
+              brushSelect: false,
+              backgroundColor: "#e2e8f0",
+              fillerColor: "rgba(59,130,246,0.18)",
+              borderColor: "#cbd5e1",
+              handleStyle: { color: "#64748b" }
+            },
+            {
+              type: "inside",
+              xAxisIndex: 0
+            }
+          ],
+          series: [...areaSeries, ...lineOptions]
+        };
+
+        chart.setOption(lineOption);
+        const oceanusEl = document.getElementById("kpi-oceanus");
+        const sailorEl = document.getElementById("kpi-sailor");
+        const topGenreEl = document.getElementById("kpi-top-genre");
+        const peakShareEl = document.getElementById("kpi-peak-share");
+
+        let legendSelected = {};
+        let zoomState = { start: 0, end: 100, startValue: null, endValue: null };
+
+        const findIndexAtOrAfter = (value) => {
+          for (let i = 0; i < years.length; i += 1) {
+            if (years[i] >= value) return i;
+          }
+          return years.length - 1;
+        };
+
+        const findIndexAtOrBefore = (value) => {
+          for (let i = years.length - 1; i >= 0; i -= 1) {
+            if (years[i] <= value) return i;
+          }
+          return 0;
+        };
+
+        const getZoomRange = () => {
+          if (!years.length) return { startIdx: 0, endIdx: 0 };
+          if (zoomState.startValue !== null || zoomState.endValue !== null) {
+            const startVal =
+              zoomState.startValue !== null ? Number(zoomState.startValue) : years[0];
+            const endVal =
+              zoomState.endValue !== null ? Number(zoomState.endValue) : years[years.length - 1];
+            let startIdx = findIndexAtOrAfter(startVal);
+            let endIdx = findIndexAtOrBefore(endVal);
+            if (endIdx < startIdx) {
+              const tmp = startIdx;
+              startIdx = endIdx;
+              endIdx = tmp;
+            }
+            return { startIdx, endIdx };
+          }
+          const startPct = zoomState.start ?? 0;
+          const endPct = zoomState.end ?? 100;
+          const startIdx = Math.max(0, Math.floor((startPct / 100) * (years.length - 1)));
+          const endIdx = Math.max(startIdx, Math.ceil((endPct / 100) * (years.length - 1)));
+          return { startIdx, endIdx };
+        };
+
+        const syncLegendState = () => {
+          const defaults = {};
+          [...lineNames, ...groupOrder].forEach((name) => {
+            defaults[name] = true;
+          });
+          const legend = chart.getOption().legend?.[0] || {};
+          legendSelected = { ...defaults, ...(legend.selected || {}) };
+        };
+
+        const isSelected = (name) => legendSelected[name] !== false;
+
+        const updateKpis = () => {
+          const { startIdx, endIdx } = getZoomRange();
+          const oceanusName = lineNames[0];
+          const sailorName = lineNames[1];
+          const oceanusData = oceanusSeries;
+          const sailorData = sailorSeries;
+
+          let oceanusTotal = 0;
+          let sailorTotal = 0;
+          for (let i = startIdx; i <= endIdx; i += 1) {
+            if (isSelected(oceanusName)) {
+              oceanusTotal += Number(oceanusData[i] || 0);
+            }
+            if (isSelected(sailorName)) {
+              sailorTotal += Number(sailorData[i] || 0);
+            }
+          }
+
+          let topGenre = "—";
+          let topGenreCount = 0;
+          groupOrder.forEach((group) => {
+            const series = groupMap[group] || [];
+            let total = 0;
+            for (let i = startIdx; i <= endIdx; i += 1) {
+              total += Number(series[i] || 0);
+            }
+            if (total > topGenreCount) {
+              topGenreCount = total;
+              topGenre = `${group} (${total})`;
+            }
+          });
+
+          let peakYear = null;
+          let peakShare = 0;
+          if (isSelected(oceanusName) && isSelected(sailorName)) {
+            for (let i = startIdx; i <= endIdx; i += 1) {
+              const oceanusVal = Number(oceanusData[i] || 0);
+              const sailorVal = Number(sailorData[i] || 0);
+              if (!oceanusVal) continue;
+              const share = sailorVal / oceanusVal;
+              if (share > peakShare) {
+                peakShare = share;
+                peakYear = years[i];
+              }
+            }
+          }
+
+          const sailorShare = oceanusTotal
+            ? `${sailorTotal.toLocaleString()} (${((sailorTotal / oceanusTotal) * 100).toFixed(1)}%)`
+            : sailorTotal.toLocaleString();
+
+          if (oceanusEl) oceanusEl.textContent = oceanusTotal.toLocaleString();
+          if (sailorEl) sailorEl.textContent = sailorShare;
+          if (topGenreEl) topGenreEl.textContent = topGenre;
+          if (peakShareEl) {
+            peakShareEl.textContent = peakYear
+              ? `${peakYear} (${(peakShare * 100).toFixed(0)}%)`
+              : "—";
+          }
+
+        };
+
+        syncLegendState();
+        updateKpis();
+
+        chart.on("legendselectchanged", (params) => {
+          legendSelected = { ...legendSelected, ...params.selected };
+          updateKpis();
+        });
+
+        const handleZoom = (params) => {
+          const batch = params.batch && params.batch[0] ? params.batch[0] : params;
+          zoomState = {
+            start: batch.start ?? zoomState.start,
+            end: batch.end ?? zoomState.end,
+            startValue: batch.startValue ?? null,
+            endValue: batch.endValue ?? null
+          };
+          updateKpis();
+        };
+
+        chart.on("dataZoom", (params) => {
+          handleZoom(params);
+        });
+
+        chart.on("finished", () => {
+          syncLegendState();
+          updateKpis();
+        });
+
+        window.addEventListener("resize", () => {
+          chart.resize();
+        });
+      });
+    </script>
+  </body>
+</html>

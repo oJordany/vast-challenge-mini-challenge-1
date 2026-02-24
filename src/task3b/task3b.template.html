@@ -1,0 +1,1421 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Task 3(b) - Oceanus Folk Future Stars</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Source+Serif+4:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <style>
+      :root {
+        --bg: #0b1220;
+        --panel: #101826;
+        --card: #f8fafc;
+        --ink: #0f172a;
+        --muted: #64748b;
+        --accent: #f97316;
+        --accent-2: #06b6d4;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Source Serif 4", serif;
+        background:
+          radial-gradient(circle at 12% 12%, rgba(249,115,22,0.16), transparent 40%),
+          radial-gradient(circle at 88% 18%, rgba(6,182,212,0.16), transparent 42%),
+          radial-gradient(circle at 50% 85%, rgba(148,163,184,0.12), transparent 48%),
+          var(--bg);
+        color: #e2e8f0;
+      }
+
+      .shell {
+        max-width: 96vw;
+        margin: 0 auto;
+        padding: 28px 20px 40px;
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+      }
+
+      header.hero {
+        display: grid;
+        gap: 14px;
+        padding: 22px 26px;
+        border-radius: 18px;
+        background: linear-gradient(120deg, rgba(15,23,42,0.9), rgba(30,41,59,0.92));
+        border: 1px solid rgba(148,163,184,0.25);
+        box-shadow: 0 24px 50px rgba(2,8,23,0.45);
+      }
+
+      .hero h1 {
+        margin: 0;
+        font-family: "Space Grotesk", sans-serif;
+        font-size: 26px;
+        letter-spacing: 0.4px;
+      }
+
+      .hero p {
+        margin: 0;
+        color: #cbd5f5;
+        max-width: 950px;
+        line-height: 1.6;
+      }
+
+      .kpis {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 12px;
+      }
+
+      .kpi {
+        padding: 12px 16px;
+        border-radius: 14px;
+        background: rgba(15,23,42,0.65);
+        border: 1px solid rgba(148,163,184,0.25);
+      }
+
+      .kpi span.label {
+        display: block;
+        font-family: "Space Grotesk", sans-serif;
+        font-size: 12px;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: #94a3b8;
+        margin-bottom: 6px;
+      }
+
+      .kpi span.value {
+        display: block;
+        font-family: "Space Grotesk", sans-serif;
+        font-size: 20px;
+        color: #f8fafc;
+      }
+
+      section.panel {
+        background: var(--card);
+        color: var(--ink);
+        border-radius: 18px;
+        padding: 18px 18px 20px;
+        box-shadow: 0 24px 48px rgba(2, 8, 23, 0.35);
+      }
+
+      .panel h2 {
+        margin: 0 0 6px;
+        font-family: "Space Grotesk", sans-serif;
+        font-size: 18px;
+      }
+
+      .panel p {
+        margin: 0 0 10px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .controls {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 14px;
+        margin-bottom: 12px;
+      }
+
+      .control-card {
+        padding: 10px 12px;
+        border-radius: 12px;
+        background: #f1f5f9;
+        border: 1px solid rgba(148,163,184,0.3);
+      }
+
+      .control-card label {
+        display: block;
+        font-size: 12px;
+        color: #475569;
+        margin-bottom: 6px;
+      }
+
+      .control-row {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+
+      .control-row input[type="range"] {
+        width: 100%;
+      }
+
+      .control-row input[type="number"] {
+        width: 64px;
+        padding: 4px 6px;
+        border-radius: 6px;
+        border: 1px solid #cbd5e1;
+        font-family: "Space Grotesk", sans-serif;
+        font-size: 12px;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: 1.7fr 1fr;
+        gap: 16px;
+      }
+
+      .axis-controls {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        align-items: center;
+        margin-bottom: 8px;
+      }
+
+      .axis-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 8px;
+        border-radius: 10px;
+        background: #e2e8f0;
+        font-size: 12px;
+        color: #0f172a;
+        font-family: "Space Grotesk", sans-serif;
+      }
+
+      .axis-chip button {
+        border: 1px solid #cbd5e1;
+        background: #f8fafc;
+        border-radius: 6px;
+        font-size: 11px;
+        padding: 2px 6px;
+        cursor: pointer;
+      }
+
+      .info-button {
+        position: absolute;
+        bottom: 10px;
+        left: 12px;
+        padding: 4px 10px;
+        border-radius: 999px;
+        border: 1px solid #cbd5e1;
+        background: #e2e8f0;
+        font-family: "Space Grotesk", sans-serif;
+        font-size: 12px;
+        cursor: pointer;
+        z-index: 4;
+      }
+
+      .info-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.6);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+      }
+
+      .info-card {
+        background: #f8fafc;
+        border-radius: 16px;
+        padding: 18px;
+        width: min(720px, 92vw);
+        box-shadow: 0 30px 60px rgba(15, 23, 42, 0.35);
+        color: #0f172a;
+      }
+
+      .info-card h3 {
+        margin: 0 0 8px;
+        font-family: "Space Grotesk", sans-serif;
+      }
+
+      .info-card p {
+        color: #0f172a;
+      }
+
+      .info-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-top: 10px;
+      }
+
+      .info-chart {
+        width: 100%;
+        height: 220px;
+      }
+
+      .info-close {
+        margin-top: 10px;
+        padding: 6px 10px;
+        border-radius: 8px;
+        border: 1px solid #cbd5e1;
+        background: #e2e8f0;
+        cursor: pointer;
+      }
+
+      .chart-wrap {
+        padding: 8px 8px 12px;
+        border-radius: 16px;
+        background: #f8fafc;
+        width: 100%;
+        height: 52vh;
+        max-height: 520px;
+        min-height: 320px;
+        position: relative;
+      }
+
+
+      .cluster-legend {
+        position: absolute;
+        bottom: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        background: rgba(248, 250, 252, 0.9);
+        padding: 6px 8px;
+        border-radius: 10px;
+        border: 1px solid #e2e8f0;
+        font-size: 11px;
+        font-family: "Space Grotesk", sans-serif;
+        color: #0f172a;
+        z-index: 10;
+        pointer-events: auto;
+      }
+
+
+      .cluster-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        cursor: pointer;
+        padding: 2px 6px;
+        border-radius: 999px;
+        border: 1px solid transparent;
+      }
+
+      .cluster-swatch {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+      }
+
+      .cluster-item.inactive {
+        opacity: 0.4;
+      }
+
+      .cluster-item.inactive .cluster-swatch {
+        filter: grayscale(0.6);
+      }
+
+
+
+      #parallel-chart {
+        width: 100%;
+        height: 100%;
+      }
+
+      .ranking {
+        padding: 12px;
+        border-radius: 16px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        height: 52vh;
+        max-height: 520px;
+        min-height: 320px;
+        display: flex;
+        flex-direction: column;
+        --rank-cols: minmax(180px, 1.6fr) minmax(70px, 0.6fr) minmax(70px, 0.6fr)
+          minmax(80px, 0.7fr) minmax(60px, 0.4fr) minmax(90px, 0.7fr);
+      }
+
+      .ranking h3 {
+        margin: 0 0 6px;
+        font-family: "Space Grotesk", sans-serif;
+        font-size: 15px;
+      }
+
+      .ranking small {
+        color: #64748b;
+      }
+
+      .ranking-list {
+        margin-top: 10px;
+        overflow-y: auto;
+        flex: 1;
+        padding-right: 6px;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+
+      .ranking-header {
+        display: grid;
+        grid-template-columns: var(--rank-cols);
+        gap: 6px;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: #64748b;
+        padding: 4px 4px 6px;
+        border-bottom: 1px solid #e2e8f0;
+        position: sticky;
+        top: 0;
+        background: #f8fafc;
+        z-index: 2;
+      }
+
+      .rank-item {
+        display: grid;
+        grid-template-columns: var(--rank-cols);
+        align-items: center;
+        gap: 6px;
+        padding: 6px 4px;
+        cursor: pointer;
+        border-radius: 8px;
+      }
+
+      .rank-item:hover {
+        background: #eef2ff;
+      }
+
+      .rank-item.active {
+        background: #dbeafe;
+      }
+
+      .rank-name {
+        font-size: 12px;
+        color: #0f172a;
+        display: flex;
+        gap: 6px;
+        align-items: center;
+        min-width: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .rank-metric {
+        font-size: 12px;
+        color: #0f172a;
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .current-star {
+        background: #facc15;
+        color: #78350f;
+        font-size: 10px;
+        padding: 2px 6px;
+        border-radius: 999px;
+        font-weight: 600;
+      }
+
+      .rank-bar {
+        height: 6px;
+        border-radius: 999px;
+        background: #c7d2fe;
+      }
+
+      .detail-grid {
+        display: grid;
+        grid-template-columns: 1fr 1.2fr;
+        gap: 16px;
+        margin-top: 16px;
+      }
+
+      .detail-card {
+        padding: 8px;
+        border-radius: 16px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        height: 34vh;
+        min-height: 260px;
+      }
+
+      #radar-chart,
+      #forecast-chart {
+        width: 100%;
+        height: 100%;
+      }
+
+      .selected-label {
+        font-family: "Space Grotesk", sans-serif;
+        font-size: 13px;
+        color: #0f172a;
+        margin-bottom: 6px;
+      }
+
+      @media (max-width: 1100px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+        .ranking {
+          height: auto;
+          max-height: none;
+        }
+        .detail-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <header class="hero">
+        <h1>Oceanus Folk Future Stars (5-Year Projection)</h1>
+        <p>
+          We project activity, popularity, and influence using a linear trend on the most recent years
+          and compute a forecast score that blends predicted level and growth (α=__SCORE_ALPHA__).
+          Activity measures total works released, popularity counts notable (charting) works, and influence
+          captures the diversity of unique collaborators. Scores are normalized (0–1) and used in the
+          weighted ranking driven by the sliders.
+        </p>
+        <div class="kpis">
+          <div class="kpi">
+            <span class="label">Candidate artists</span>
+            <span class="value" id="kpi-candidates">__CANDIDATES__</span>
+          </div>
+          <div class="kpi">
+            <span class="label">Latest year</span>
+            <span class="value">__MAX_YEAR__</span>
+          </div>
+          <div class="kpi">
+            <span class="label">Forecast year</span>
+            <span class="value">__PRED_YEAR__</span>
+          </div>
+          <div class="kpi">
+            <span class="label">Top 3 (default weights)</span>
+            <span class="value" id="kpi-top3">—</span>
+          </div>
+        </div>
+      </header>
+
+      <section class="panel">
+        <h2>Weighted Forecast Ranking</h2>
+        <p>
+          The lines represent normalized forecast scores (predicted level + growth) for activity,
+          popularity, and influence. The ranking uses the weighted average of these scores. Click or hover
+          to see the radar profile and linear forecast.
+        </p>
+
+        <div class="controls">
+          <div class="control-card">
+            <label>Activity weight</label>
+            <div class="control-row">
+              <input id="w-activity" type="range" min="0" max="1" step="0.01" value="0.5" />
+              <input id="w-activity-num" type="number" min="0" max="1" step="0.01" value="0.5" />
+            </div>
+          </div>
+          <div class="control-card">
+            <label>Influence weight</label>
+            <div class="control-row">
+              <input id="w-influence" type="range" min="0" max="1" step="0.01" value="0.5" />
+              <input id="w-influence-num" type="number" min="0" max="1" step="0.01" value="0.5" />
+            </div>
+          </div>
+          <div class="control-card">
+            <label>Popularity weight</label>
+            <div class="control-row">
+              <input id="w-popularity" type="range" min="0" max="1" step="0.01" value="0.5" />
+              <input id="w-popularity-num" type="number" min="0" max="1" step="0.01" value="0.5" />
+            </div>
+          </div>
+          <div class="control-card">
+            <label>Baseline</label>
+            <div class="control-row">
+              <button id="reset-weights" style="padding:6px 10px;border-radius:8px;border:1px solid #cbd5e1;background:#e2e8f0;font-family:'Space Grotesk',sans-serif;font-size:12px;cursor:pointer;">
+                Reset to baseline
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid">
+          <div class="chart-wrap">
+            <button class="info-button" id="info-button">i</button>
+            <div class="cluster-legend" id="cluster-legend"></div>
+            <div id="parallel-chart"></div>
+          </div>
+          <div class="ranking">
+            <h3>Ranking (weighted)</h3>
+            <small>Stars indicate the top 3 predicted artists (excluding Sailor Shift).</small>
+            <div class="ranking-list" id="ranking-list"></div>
+          </div>
+        </div>
+
+        <div class="detail-grid">
+          <div class="detail-card">
+            <div class="selected-label" id="selected-name">Selected artist: —</div>
+            <div id="radar-chart"></div>
+          </div>
+          <div class="detail-card">
+            <div class="selected-label">Linear forecast (cumulative values)</div>
+            <div id="forecast-chart"></div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div class="info-overlay" id="info-overlay">
+      <div class="info-card">
+        <h3>Cluster selection diagnostics</h3>
+        <p>
+          K-means clustering is applied to the normalized forecast scores (activity, popularity, influence).
+          The elbow curve shows inertia by k, and the silhouette score indicates separation quality. We report an
+          outlier-adjusted silhouette that slightly penalizes configurations where Sailor Shift is grouped with many
+          artists and gives a small bonus when she forms a singleton cluster.
+          Although the
+          Elbow method suggested that the optimal number of clusters might be three, a four-cluster configuration
+          was ultimately chosen. In the three-cluster setup, Sailor Shift — the current leading star — was grouped
+          with other artists, making it difficult to distinguish her uniquely strong profile. In contrast, the
+          four-cluster configuration clearly separated her into a distinct group, reinforcing her outlier status in
+          terms of productivity, influence, and genre commitment. The slightly higher silhouette score for four
+          clusters (balance-adjusted to account for cluster size) also supported this choice, indicating
+          better-defined clusters.
+        </p>
+        <div class="info-grid">
+          <div>
+            <strong>Elbow (inertia)</strong>
+            <div class="info-chart" id="elbow-chart"></div>
+          </div>
+          <div>
+            <strong>Silhouette</strong>
+            <div class="info-chart" id="silhouette-chart"></div>
+          </div>
+        </div>
+        <button class="info-close" id="info-close">Close</button>
+      </div>
+    </div>
+
+    <script>
+      const INLINE_PAYLOAD = __DATA__;
+      const DATA_URL = "./__DATA_URL__";
+
+      const loadPayload = async () => {
+        try {
+          const response = await fetch(DATA_URL, { cache: "no-store" });
+          if (response.ok) {
+            const text = await response.text();
+            const trimmed = text.trim();
+            const looksLikeJson = trimmed.startsWith("{") || trimmed.startsWith("[");
+            if (!looksLikeJson) {
+              console.warn("Unexpected payload for task3b.json, falling back to inline.");
+              return INLINE_PAYLOAD;
+            }
+            try {
+              return JSON.parse(text);
+            } catch (parseErr) {
+              console.warn("Invalid JSON payload, falling back to inline:", parseErr);
+              return INLINE_PAYLOAD;
+            }
+          }
+        } catch (err) {
+          console.warn("Falling back to inline payload:", err);
+        }
+        return INLINE_PAYLOAD;
+      };
+
+      const toNumber = (value) => {
+        const num = Number(value);
+        return Number.isNaN(num) ? 0 : num;
+      };
+
+      const scoreColor = (score) => {
+        const clamped = Math.max(0, Math.min(1, score));
+        const start = [199, 210, 254];
+        const end = [29, 78, 216];
+        const rgb = start.map((s, i) => Math.round(s + (end[i] - s) * clamped));
+        return `rgb(${rgb.join(",")})`;
+      };
+
+      loadPayload().then((payload) => {
+        const meta = payload.meta || {};
+        const artists = payload.artists || [];
+        const artistByName = new Map(artists.map((artist) => [artist.name, artist]));
+        const predYear = meta.pred_year;
+        const displayYears = meta.display_years || [];
+        const lastYear = meta.max_year;
+        const axisLabels = {
+          activity: "Activity\n(forecast score)",
+          influence: "Influence\n(forecast score)",
+          popularity: "Popularity\n(forecast score)",
+        };
+        const axisOrder = ["activity", "influence", "popularity"];
+        const clusterColors = [
+          "#f472b6",
+          "#22d3ee",
+          "#a78bfa",
+          "#fb923c",
+          "#fb7185",
+          "#60a5fa",
+        ];
+
+        const weightInputs = {
+          activity: {
+            range: document.getElementById("w-activity"),
+            number: document.getElementById("w-activity-num"),
+          },
+          influence: {
+            range: document.getElementById("w-influence"),
+            number: document.getElementById("w-influence-num"),
+          },
+          popularity: {
+            range: document.getElementById("w-popularity"),
+            number: document.getElementById("w-popularity-num"),
+          },
+        };
+        const resetButton = document.getElementById("reset-weights");
+        const baselineWeights = {
+          activity: 0.5,
+          influence: 0.5,
+          popularity: 0.5,
+        };
+
+        const selectedLabel = document.getElementById("selected-name");
+        const rankingList = document.getElementById("ranking-list");
+        const top3El = document.getElementById("kpi-top3");
+        const candidatesEl = document.getElementById("kpi-candidates");
+        const infoButton = document.getElementById("info-button");
+        const infoOverlay = document.getElementById("info-overlay");
+        const infoClose = document.getElementById("info-close");
+        const clusterLegendEl = document.getElementById("cluster-legend");
+
+        const chart = echarts.init(document.getElementById("parallel-chart"));
+        const radarChart = echarts.init(document.getElementById("radar-chart"));
+        const forecastChart = echarts.init(document.getElementById("forecast-chart"));
+        const elbowChart = echarts.init(document.getElementById("elbow-chart"));
+        const silhouetteChart = echarts.init(document.getElementById("silhouette-chart"));
+
+        let selectedArtist = artists[0] ? artists[0].name : null;
+        let lockedArtist = selectedArtist;
+        let currentScores = new Map();
+        let activeClusters = new Set();
+        let visibleArtists = artists;
+        let visibleIndexByName = new Map();
+        let rankRowByName = new Map();
+        let lastHoverName = null;
+        let infoOpen = false;
+        let parallelReady = false;
+        let pendingHighlight = null;
+        const setTooltipsEnabled = (enabled) => {
+          const show = !!enabled;
+          chart.setOption({ tooltip: { show } }, false);
+          radarChart.setOption({ tooltip: { show } }, false);
+          forecastChart.setOption({ tooltip: { show } }, false);
+        };
+        const hideAllTooltips = () => {
+          chart.dispatchAction({ type: "hideTip" });
+          radarChart.dispatchAction({ type: "hideTip" });
+          forecastChart.dispatchAction({ type: "hideTip" });
+        };
+        const isParallelReady = () => {
+          const model = chart.getModel && chart.getModel();
+          const series = model && model.getSeriesByIndex(0);
+          const coord = series && series.coordinateSystem;
+          return Boolean(coord && coord._axesMap && coord._axesMap.size);
+        };
+
+        const showParallelTip = (name, attempt = 0) => {
+          if (infoOpen) return;
+          const dataIndex = visibleIndexByName.get(name);
+          if (dataIndex == null) return;
+          if (!isParallelReady()) {
+            if (attempt < 8) {
+              setTimeout(() => showParallelTip(name, attempt + 1), 80);
+            }
+            return;
+          }
+          try {
+            chart.dispatchAction({
+              type: "showTip",
+              seriesIndex: 0,
+              dataIndex,
+            });
+          } catch (err) {
+            if (attempt < 8) {
+              setTimeout(() => showParallelTip(name, attempt + 1), 80);
+            }
+          }
+          if (attempt === 0) {
+            setTimeout(() => {
+              try {
+                chart.dispatchAction({
+                  type: "showTip",
+                  seriesIndex: 0,
+                  dataIndex,
+                });
+              } catch (err) {
+                // ignore
+              }
+            }, 120);
+          }
+        };
+
+        if (meta.cluster_k) {
+          activeClusters = new Set(
+            Array.from({ length: meta.cluster_k }, (_, idx) => idx + 1)
+          );
+        }
+
+        const updateCandidateKpi = () => {
+          if (!candidatesEl) return;
+          const count = visibleArtists.filter((a) => a.name !== "Sailor Shift").length;
+          candidatesEl.textContent = String(count);
+        };
+
+        const computeScores = () => {
+          const wActivity = toNumber(weightInputs.activity.range.value);
+          const wInfluence = toNumber(weightInputs.influence.range.value);
+          const wPopularity = toNumber(weightInputs.popularity.range.value);
+          const total = wActivity + wInfluence + wPopularity || 1;
+
+          currentScores = new Map();
+          artists.forEach((artist) => {
+            const score =
+              (artist.norm.activity * wActivity +
+                artist.norm.influence * wInfluence +
+                artist.norm.popularity * wPopularity) /
+              total;
+            currentScores.set(artist.name, score);
+          });
+        };
+
+        const renderParallel = () => {
+          parallelReady = false;
+          pendingHighlight = null;
+          visibleArtists =
+            activeClusters.size === 0
+              ? []
+              : artists.filter((artist) =>
+                  activeClusters.has(artist.cluster ?? 1)
+                );
+          visibleIndexByName = new Map();
+
+          const data = visibleArtists.map((artist, idx) => {
+            visibleIndexByName.set(artist.name, idx);
+            const score = currentScores.get(artist.name) || 0;
+            const isTop = artist.name !== "Sailor Shift" && isTop3(artist.name);
+            const cluster = artist.cluster ?? 1;
+            const clusterIndex = Math.max(0, cluster - 1);
+            const isSelected = artist.name === selectedArtist;
+            return {
+              name: artist.name,
+              value: [
+                artist.norm[axisOrder[0]],
+                artist.norm[axisOrder[1]],
+                artist.norm[axisOrder[2]],
+              ],
+              lineStyle: {
+                color: clusterColors[clusterIndex % clusterColors.length],
+                width: isSelected ? 3 : isTop ? 2.4 : 1,
+                opacity: isSelected ? 1 : isTop ? 0.9 : 0.12,
+              },
+            };
+          });
+
+          const option = {
+            backgroundColor: "transparent",
+            parallelAxis: [
+              { dim: 0, name: axisLabels[axisOrder[0]], max: 1 },
+              { dim: 1, name: axisLabels[axisOrder[1]], max: 1 },
+              { dim: 2, name: axisLabels[axisOrder[2]], max: 1 },
+            ],
+            parallel: {
+              left: 50,
+              right: 40,
+              top: 40,
+              bottom: 40,
+              reorderable: false,
+            parallelAxisDefault: {
+              type: "value",
+              nameLocation: "end",
+              nameGap: 14,
+              nameTextStyle: {
+                color: "#334155",
+                fontFamily: "Space Grotesk",
+                fontSize: 12,
+                lineHeight: 14,
+              },
+              axisLabel: { color: "#64748b" },
+            },
+          },
+            tooltip: {
+              trigger: "item",
+              triggerOn: "mousemove|click",
+              alwaysShowContent: true,
+              confine: true,
+              appendToBody: false,
+              extraCssText: "z-index: 2;",
+              formatter: (params) => {
+                const artist = visibleArtists[params.dataIndex];
+                if (!artist) return "";
+                const score = currentScores.get(artist.name) || 0;
+                return `
+                  <strong>${artist.name}</strong><br/>
+                  Activity (forecast score): ${artist.norm.activity.toFixed(3)}<br/>
+                  Produtivity (forecast score): ${artist.norm.popularity.toFixed(3)}<br/>
+                  Influence (forecast score): ${artist.norm.influence.toFixed(3)}<br/>
+                  Cluster: ${artist.cluster ?? 1}<br/>
+                  Weighted score: ${score.toFixed(3)}
+                `;
+              },
+            },
+            series: [
+              {
+                name: "Forecast profile",
+                type: "parallel",
+                lineStyle: { width: 1, opacity: 0.12 },
+                emphasis: { lineStyle: { width: 3, opacity: 1 } },
+                blur: { lineStyle: { opacity: 0.04 } },
+                data,
+              },
+            ],
+            animation: false,
+          };
+
+          chart.clear();
+          chart.setOption(option, true);
+          chart.resize();
+          updateCandidateKpi();
+        };
+
+        const isTop3 = (name) => {
+          const ranked = getRanked();
+          const top3 = ranked
+            .filter((d) => d.name !== "Sailor Shift")
+            .slice(0, 3)
+            .map((d) => d.name);
+          return top3.includes(name);
+        };
+
+        const getRanked = () => {
+          const pool = activeClusters.size === 0 ? [] : visibleArtists;
+          const source = pool.length ? pool : activeClusters.size === 0 ? [] : artists;
+          return source
+            .map((artist) => ({
+              name: artist.name,
+              score: currentScores.get(artist.name) || 0,
+            }))
+            .sort((a, b) => b.score - a.score);
+        };
+
+        const renderRanking = () => {
+          const ranked = getRanked();
+          const top3 = ranked
+            .filter((d) => d.name !== "Sailor Shift")
+            .slice(0, 3);
+
+          if (top3El) {
+            top3El.textContent = top3.map((d) => d.name).join(", ") || "—";
+          }
+
+          rankingList.innerHTML = "";
+          rankRowByName = new Map();
+          const header = document.createElement("div");
+          header.className = "ranking-header";
+          header.innerHTML = `
+            <div>Artist</div>
+            <div style="text-align:right;">Activity</div>
+            <div style="text-align:right;">Influence</div>
+            <div style="text-align:right;">Popularity</div>
+            <div style="text-align:right;">Cluster</div>
+            <div style="text-align:right;">Weighted</div>
+          `;
+          rankingList.appendChild(header);
+
+          ranked.forEach((item, idx) => {
+            const row = document.createElement("div");
+            row.className = "rank-item";
+            row.dataset.artist = item.name;
+            const name = document.createElement("div");
+            name.className = "rank-name";
+            const star = isTop3(item.name) ? "⭐" : "";
+            const current =
+              item.name === "Sailor Shift"
+                ? '<span class="current-star">Current Star</span>'
+                : "";
+            name.innerHTML = `${idx + 1}. ${item.name} ${star}${current}`;
+
+            const artist = artistByName.get(item.name);
+            const activity = artist ? artist.norm.activity : 0;
+            const influence = artist ? artist.norm.influence : 0;
+            const popularity = artist ? artist.norm.popularity : 0;
+            const cluster = artist ? artist.cluster ?? 1 : "—";
+
+            const activityEl = document.createElement("div");
+            activityEl.className = "rank-metric";
+            activityEl.textContent = activity.toFixed(3);
+            const influenceEl = document.createElement("div");
+            influenceEl.className = "rank-metric";
+            influenceEl.textContent = influence.toFixed(3);
+            const popularityEl = document.createElement("div");
+            popularityEl.className = "rank-metric";
+            popularityEl.textContent = popularity.toFixed(3);
+            const clusterEl = document.createElement("div");
+            clusterEl.className = "rank-metric";
+            clusterEl.textContent = String(cluster);
+            const weightedEl = document.createElement("div");
+            weightedEl.className = "rank-metric";
+            weightedEl.textContent = (item.score || 0).toFixed(3);
+
+            row.appendChild(name);
+            row.appendChild(activityEl);
+            row.appendChild(influenceEl);
+            row.appendChild(popularityEl);
+            row.appendChild(clusterEl);
+            row.appendChild(weightedEl);
+            rankRowByName.set(item.name, row);
+            row.addEventListener("click", () => toggleLockSelection(item.name));
+            row.addEventListener("mouseenter", () => {
+              previewArtist(item.name);
+              highlightArtist(item.name);
+            });
+            row.addEventListener("mouseleave", () => restoreSelection());
+            rankingList.appendChild(row);
+          });
+        };
+
+        const renderClusterLegend = () => {
+          if (!clusterLegendEl) return;
+          const k = meta.cluster_k || 0;
+          clusterLegendEl.innerHTML = "";
+          if (!k) return;
+          for (let i = 1; i <= k; i += 1) {
+            const item = document.createElement("div");
+            item.className = "cluster-item";
+            const swatch = document.createElement("span");
+            swatch.className = "cluster-swatch";
+            swatch.style.background = clusterColors[(i - 1) % clusterColors.length];
+            const label = document.createElement("span");
+            label.textContent = `Cluster ${i}`;
+            item.appendChild(swatch);
+            item.appendChild(label);
+            if (!activeClusters.has(i)) {
+              item.classList.add("inactive");
+            }
+            item.addEventListener("click", () => {
+              if (activeClusters.has(i)) {
+                activeClusters.delete(i);
+              } else {
+                activeClusters.add(i);
+              }
+              renderClusterLegend();
+              refresh();
+            });
+            clusterLegendEl.appendChild(item);
+          }
+        };
+
+        const renderClusterInfo = () => {
+          const elbow = meta.elbow || [];
+          const sil = meta.silhouette || [];
+          const silRaw = meta.silhouette_raw || [];
+          const elbowOption = {
+            backgroundColor: "transparent",
+            grid: { left: 45, right: 10, top: 20, bottom: 50, containLabel: true },
+            tooltip: {
+              trigger: "axis",
+              axisPointer: { type: "line" },
+              formatter: (params) => {
+                if (!params || !params.length) return "";
+                const point = params[0];
+                return `k = ${point.axisValue}<br/>Inércia: ${point.data.toFixed(3)}`;
+              },
+            },
+            xAxis: {
+              type: "category",
+              data: elbow.map((d) => d.k),
+              axisLabel: { color: "#64748b" },
+            },
+            yAxis: {
+              type: "value",
+              axisLabel: { color: "#64748b" },
+              splitLine: { lineStyle: { color: "#e2e8f0" } },
+            },
+            series: [
+              {
+                type: "line",
+                data: elbow.map((d) => d.inertia),
+                lineStyle: { color: "#0ea5e9", width: 2 },
+                symbol: "circle",
+                symbolSize: 6,
+              },
+            ],
+          };
+          const silOption = {
+            backgroundColor: "transparent",
+            grid: { left: 45, right: 10, top: 20, bottom: 50, containLabel: true },
+            tooltip: {
+              trigger: "axis",
+              axisPointer: { type: "line" },
+              formatter: (params) => {
+                if (!params || !params.length) return "";
+                const point = params[0];
+                const rawMatch = silRaw.find((d) => String(d.k) === String(point.axisValue));
+                const rawText = rawMatch
+                  ? `<br/>Raw silhouette: ${rawMatch.score.toFixed(3)}`
+                  : "";
+                const sizeText =
+                  rawMatch && rawMatch.sailor_size != null
+                    ? `<br/>Sailor cluster size: ${rawMatch.sailor_size}`
+                    : "";
+                return `k = ${point.axisValue}<br/>Outlier-adjusted: ${point.data.toFixed(3)}${rawText}${sizeText}`;
+              },
+            },
+            xAxis: {
+              type: "category",
+              data: sil.map((d) => d.k),
+              axisLabel: { color: "#64748b" },
+            },
+            yAxis: {
+              type: "value",
+              axisLabel: { color: "#64748b" },
+              splitLine: { lineStyle: { color: "#e2e8f0" } },
+            },
+            series: [
+              {
+                type: "line",
+                data: sil.map((d) => d.score),
+                lineStyle: { color: "#f97316", width: 2 },
+                symbol: "circle",
+                symbolSize: 6,
+              },
+            ],
+          };
+          elbowChart.setOption(elbowOption);
+          silhouetteChart.setOption(silOption);
+        };
+
+        const updateRadar = (artist) => {
+          if (!artist) return;
+          const values = [
+            artist.norm.activity,
+            artist.norm.influence,
+            artist.norm.popularity,
+          ];
+
+          const radarOption = {
+            backgroundColor: "transparent",
+            radar: {
+              indicator: [
+                { name: `Activity\n${artist.activity.current.toFixed(0)}`, max: 1 },
+                { name: `Influence\n${artist.influence.current.toFixed(0)}`, max: 1 },
+                { name: `Popularity\n${artist.popularity.current.toFixed(0)}`, max: 1 },
+              ],
+              radius: "68%",
+              splitLine: { lineStyle: { color: "#e2e8f0" } },
+              axisLine: { lineStyle: { color: "#cbd5e1" } },
+              axisName: { color: "#475569", fontFamily: "Space Grotesk", fontSize: 11 },
+            },
+            tooltip: {
+              trigger: "item",
+              alwaysShowContent: true,
+              triggerOn: "mousemove|click",
+              formatter: () =>
+                `${artist.name}<br/>Activity total: ${artist.activity.current.toFixed(0)}<br/>Influence total: ${artist.influence.current.toFixed(0)}<br/>Popularity total: ${artist.popularity.current.toFixed(0)}`,
+            },
+            series: [
+              {
+                type: "radar",
+                data: [
+                  {
+                    value: values,
+                    areaStyle: { color: "rgba(59,130,246,0.25)" },
+                    lineStyle: { color: "#1d4ed8" },
+                    itemStyle: { color: "#1d4ed8" },
+                  },
+                ],
+              },
+            ],
+          };
+
+          radarChart.setOption(radarOption);
+          radarChart.dispatchAction({
+            type: "showTip",
+            seriesIndex: 0,
+            dataIndex: 0,
+          });
+        };
+
+        const updateForecast = (artist) => {
+          if (!artist) return;
+          const years = [...displayYears, predYear];
+          const activity = [...artist.series.activity, null];
+          const influence = [...artist.series.influence, null];
+          const popularity = [...artist.series.popularity, null];
+
+          const forecastSeries = (metric, color, label) => {
+            const lastVal = metric[metric.length - 2];
+            const predVal = artist[label].predicted;
+            return {
+              type: "line",
+              name: `${label} forecast`,
+              data: [
+                [String(lastYear), lastVal],
+                [String(predYear), predVal],
+              ],
+              lineStyle: { type: "dashed", color },
+              symbol: "diamond",
+              symbolSize: 8,
+              showSymbol: true,
+              smooth: false,
+              connectNulls: true,
+            };
+          };
+
+          const option = {
+            backgroundColor: "transparent",
+            grid: { left: 50, right: 30, top: 40, bottom: 40, containLabel: true },
+            legend: {
+              top: 0,
+              textStyle: { color: "#475569", fontFamily: "Space Grotesk" },
+            },
+            tooltip: {
+              trigger: "axis",
+            },
+            xAxis: {
+              type: "category",
+              data: years.map(String),
+              axisLabel: { color: "#64748b", rotate: 45 },
+            },
+            yAxis: {
+              type: "value",
+              axisLabel: { color: "#64748b" },
+              splitLine: { lineStyle: { color: "#e2e8f0" } },
+            },
+            series: [
+              {
+                type: "line",
+                name: "Activity",
+                data: activity,
+                lineStyle: { color: "#1d4ed8", width: 2 },
+                showSymbol: false,
+              },
+              {
+                type: "line",
+                name: "Influence",
+                data: influence,
+                lineStyle: { color: "#0f766e", width: 2 },
+                showSymbol: false,
+              },
+              {
+                type: "line",
+                name: "Popularity",
+                data: popularity,
+                lineStyle: { color: "#facc15", width: 2 },
+                showSymbol: false,
+              },
+              forecastSeries(activity, "#1d4ed8", "activity"),
+              forecastSeries(influence, "#0f766e", "influence"),
+              forecastSeries(popularity, "#facc15", "popularity"),
+            ],
+            animation: false,
+          };
+
+          forecastChart.setOption(option);
+        };
+
+        const highlightArtist = (name) => {
+          const dataIndex = visibleIndexByName.get(name);
+          if (dataIndex == null) return;
+          try {
+            chart.dispatchAction({ type: "downplay", seriesIndex: 0 });
+            chart.dispatchAction({ type: "highlight", seriesIndex: 0, dataIndex });
+          } catch (err) {
+            // Highlight can fail during rapid updates; ignore safely
+          }
+        };
+
+        const updateActiveRow = (name) => {
+          if (!rankingList) return;
+          rankingList.querySelectorAll(".rank-item").forEach((row) => {
+            row.classList.toggle("active", row.dataset.artist === name);
+          });
+        };
+
+        const focusRankingRow = (name, behavior = "smooth") => {
+          if (!rankingList || !name) return;
+          const row = rankRowByName.get(name);
+          if (!row) return;
+          const header = rankingList.querySelector(".ranking-header");
+          const headerHeight = header ? header.getBoundingClientRect().height : 0;
+          const listRect = rankingList.getBoundingClientRect();
+          const rowRect = row.getBoundingClientRect();
+          const visibleHeight = Math.max(0, listRect.height - headerHeight);
+          const offsetInList = rowRect.top - listRect.top - headerHeight;
+          const centerOffset = visibleHeight / 2 - rowRect.height / 2;
+          const target = Math.max(
+            0,
+            rankingList.scrollTop + offsetInList - centerOffset
+          );
+          rankingList.scrollTo({ top: target, behavior });
+        };
+
+        const toggleLockSelection = (name) => {
+          if (!name) return;
+          if (lockedArtist === name) {
+            lockedArtist = null;
+            applySelection(name, false);
+            chart.dispatchAction({ type: "downplay", seriesIndex: 0 });
+          } else {
+            selectArtist(name, true);
+          }
+        };
+
+        const applySelection = (name, lock) => {
+          if (!name) return;
+          selectedArtist = name;
+          if (lock) {
+            lockedArtist = name;
+          }
+          const artist = artists.find((a) => a.name === name);
+          if (!artist) return;
+          if (selectedLabel) {
+            selectedLabel.textContent = `Selected artist: ${name}`;
+          }
+          updateRadar(artist);
+          updateForecast(artist);
+          highlightArtist(name);
+          updateActiveRow(name);
+          if (!infoOpen) {
+            requestAnimationFrame(() => {
+              radarChart.dispatchAction({ type: "showTip", seriesIndex: 0, dataIndex: 0 });
+            });
+          }
+        };
+
+        const selectArtist = (name, lock = false) => {
+          applySelection(name, lock);
+        };
+
+        const previewArtist = (name) => {
+          applySelection(name, false);
+        };
+
+        const restoreSelection = () => {
+          if (lockedArtist) {
+            applySelection(lockedArtist, true);
+          } else {
+            chart.dispatchAction({ type: "downplay", seriesIndex: 0 });
+          }
+        };
+
+        const syncInputs = () => {
+          Object.values(weightInputs).forEach((input) => {
+            input.range.addEventListener("input", () => {
+              input.number.value = input.range.value;
+              refresh();
+            });
+            input.number.addEventListener("input", () => {
+              input.range.value = input.number.value;
+              refresh();
+            });
+          });
+          if (resetButton) {
+            resetButton.addEventListener("click", () => {
+              Object.entries(baselineWeights).forEach(([key, value]) => {
+                weightInputs[key].range.value = value;
+                weightInputs[key].number.value = value;
+              });
+              refresh();
+            });
+          }
+        };
+
+        const refresh = () => {
+          computeScores();
+          renderParallel();
+          renderRanking();
+          const ranked = getRanked();
+          if (!selectedArtist || !visibleIndexByName.has(selectedArtist)) {
+            const top = ranked[0];
+            selectedArtist = top ? top.name : null;
+          }
+          if (selectedArtist) {
+            selectArtist(selectedArtist, true);
+          }
+        };
+
+        chart.on("click", (params) => {
+          if (!params || !params.name) return;
+          selectArtist(params.name, true);
+        });
+
+        chart.on("mouseover", (params) => {
+          if (
+            !params ||
+            params.seriesType !== "parallel" ||
+            params.dataIndex == null
+          ) {
+            return;
+          }
+          const artist = visibleArtists[params.dataIndex];
+          if (!artist) return;
+          previewArtist(artist.name);
+          showParallelTip(artist.name);
+          if (artist.name !== lastHoverName) {
+            lastHoverName = artist.name;
+            focusRankingRow(artist.name, "auto");
+          }
+        });
+
+        chart.on("mouseout", () => {
+          lastHoverName = null;
+          restoreSelection();
+        });
+
+        chart.on("finished", () => {
+          parallelReady = true;
+        });
+
+        syncInputs();
+        renderClusterInfo();
+        renderClusterLegend();
+        // Ensure baseline weights are applied on first render
+        Object.entries(baselineWeights).forEach(([key, value]) => {
+          weightInputs[key].range.value = value;
+          weightInputs[key].number.value = value;
+        });
+        refresh();
+
+        if (infoButton && infoOverlay && infoClose) {
+          infoButton.addEventListener("click", () => {
+            infoOpen = true;
+            setTooltipsEnabled(false);
+            hideAllTooltips();
+            infoOverlay.style.display = "flex";
+            elbowChart.resize();
+            silhouetteChart.resize();
+          });
+          infoClose.addEventListener("click", () => {
+            infoOverlay.style.display = "none";
+            infoOpen = false;
+            setTooltipsEnabled(true);
+            hideAllTooltips();
+          });
+          infoOverlay.addEventListener("click", (event) => {
+            if (event.target === infoOverlay) {
+              infoOverlay.style.display = "none";
+              infoOpen = false;
+              setTooltipsEnabled(true);
+              hideAllTooltips();
+            }
+          });
+        }
+
+        window.addEventListener("resize", () => {
+          chart.resize();
+          radarChart.resize();
+          forecastChart.resize();
+          elbowChart.resize();
+          silhouetteChart.resize();
+        });
+      });
+    </script>
+  </body>
+</html>
