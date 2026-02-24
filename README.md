@@ -53,14 +53,14 @@ Para isso, foi criado um grafo de conhecimento musical a ser explorado visualmen
 - Página de submissão (index): `index.html`
 
 **Visualização de cada task**  
-- Task 1(a): https://public.tableau.com/views/vast-challenge/Painel1?:language=pt-BR&publish=yes&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link  
-- Task 1(b): https://public.tableau.com/views/letraB/Painel1?:language=pt-BR&publish=yes&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link  
-- Task 1(c): https://public.tableau.com/views/vast-challenge/Painel1?:language=pt-BR&publish=yes&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link  
-- Task 2(a): `src/task2a/task2a.html`  
-- Task 2(b): `src/task2b/task2b.html`  
-- Task 2(c): `src/task2c/task2c.html`  
-- Task 3(a): https://public.tableau.com/views/Vast-Challenge-q3a/Painel2?:language=pt-BR&publish=yes&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link  
-- Task 3(b): `src/task3b/task3b.html`
+- Task 1(a): <a href="https://public.tableau.com/views/vast-challenge/Painel1?:language=pt-BR&publish=yes&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link" target="_blank">Tableau – Painel 1</a>  
+- Task 1(b): <a href="https://public.tableau.com/views/letraB/Painel1?:language=pt-BR&publish=yes&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link" target="_blank">Tableau – Painel 1 (letra B)</a>  
+- Task 1(c): <a href="https://public.tableau.com/views/vast-challenge/Painel1?:language=pt-BR&publish=yes&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link" target="_blank">Tableau – Painel 1</a>  
+- Task 2(a): <a href="https://ojordany.github.io/vast-challenge-mini-challenge-1/src/task2a/task2a.html" target="_blank">ECharts – Task 2(a)</a>  
+- Task 2(b): <a href="https://ojordany.github.io/vast-challenge-mini-challenge-1/src/task2b/task2b.html" target="_blank">ECharts – Task 2(b)</a>  
+- Task 2(c): <a href="https://ojordany.github.io/vast-challenge-mini-challenge-1/src/task2c/task2c.html" target="_blank">ECharts – Task 2(c)</a>  
+- Task 3(a): <a href="https://public.tableau.com/views/Vast-Challenge-q3a/Painel2?:language=pt-BR&publish=yes&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link" target="_blank">Tableau – Painel 2</a>  
+- Task 3(b): <a href="https://ojordany.github.io/vast-challenge-mini-challenge-1/src/task3b/task3b.html" target="_blank">ECharts – Task 3(b)</a>
 
 **Estrutura do Projeto**
 ```text
