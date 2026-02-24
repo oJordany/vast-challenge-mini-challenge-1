@@ -48,15 +48,26 @@ Seu impacto colaborativo.
 Para isso, foi criado um grafo de conhecimento musical a ser explorado visualmente.
 
 **Acesso Rápido**  
-- Respostas finais: `index.html`  
+- Respostas finais: `VAST Challenge 2025 C1 Answer Sheet.html`  
 - Página pública: https://ojordany.github.io/vast-challenge-mini-challenge-1/  
+- Página de submissão (index): `index.html`
+
+**Visualização de cada task**  
+- Task 1(a): https://public.tableau.com/views/vast-challenge/Painel1?:language=pt-BR&publish=yes&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link  
+- Task 1(b): https://public.tableau.com/views/letraB/Painel1?:language=pt-BR&publish=yes&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link  
+- Task 1(c): https://public.tableau.com/views/vast-challenge/Painel1?:language=pt-BR&publish=yes&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link  
+- Task 2(a): `src/task2a/task2a.html`  
+- Task 2(b): `src/task2b/task2b.html`  
+- Task 2(c): `src/task2c/task2c.html`  
+- Task 3(a): https://public.tableau.com/views/Vast-Challenge-q3a/Painel2?:language=pt-BR&publish=yes&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link  
+- Task 3(b): `src/task3b/task3b.html`
 
 **Estrutura do Projeto**
 ```text
 .
 ├── MC1_graph.json
 ├── index.html
-├── VAST Challenge 2025 C1 Answer Sheet.docx
+├── VAST Challenge 2025 C1 Answer Sheet.html
 ├── requirements.txt
 └── src
     ├── task1a
